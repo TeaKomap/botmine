@@ -4,7 +4,7 @@ const TelegramBot = require("node-telegram-bot-api");
 const keep_alive = require("./keep_alive.js");
 
 // Ваш токен Telegram бота и ID чата
-const telegramToken = "7761808957:AAEj7TSoYZhNEMCtr5VVpHEyR_zTrRIqa2k";
+const telegramToken = "7761808957:AAHWh_RW1n2YWH87dIWJr6LKZt-StG7NZ3Y";
 const chatId = "768254793";
 
 const rl = readline.createInterface({
