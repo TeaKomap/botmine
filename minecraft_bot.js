@@ -16,9 +16,6 @@ const rl = readline.createInterface({
 let chatEnabled = true;
 let botInstance = null;
 
-// Создаем единственный экземпляр Telegram бота
-const telegramBot = new TelegramBot(telegramToken, { polling: true });
-
 // Функция для подключения бота
 function connectBot() {
   botInstance = mineflayer.createBot({
@@ -59,6 +56,7 @@ function connectBot() {
 
 // Функция для отправки сообщений в Telegram
 function sendMessageToTelegram(message) {
+  const telegramBot = new TelegramBot(telegramToken, { polling: true });
   telegramBot
     .sendMessage(chatId, message)
     .then(() => {
@@ -71,6 +69,8 @@ function sendMessageToTelegram(message) {
 
 // Функция для обработки команд от Telegram
 function handleTelegramCommands() {
+  const telegramBot = new TelegramBot(telegramToken, { polling: true });
+
   telegramBot.onText(/\/status/, (msg) => {
     const chatId = msg.chat.id;
     if (botInstance) {
@@ -79,12 +79,12 @@ function handleTelegramCommands() {
       const food = botInstance.food;
       telegramBot.sendMessage(
         chatId,
-        `Координаты: X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}, Z: ${z.toFixed(2)}\nЗдоровье: ${health}\nЕда: ${food}`
+        `Координаты: X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}, Z: ${z.toFixed(2)}\nЗдоровье: ${health}\nЕда: ${food}`,
       );
     } else {
       telegramBot.sendMessage(
         chatId,
-        "Бот Minecraft не запущен. Пожалуйста, запустите его с помощью команды /start_mc."
+        "Бот Minecraft не запущен. Пожалуйста, запустите его с помощью команды /start_mc.",
       );
     }
   });
@@ -130,12 +130,12 @@ function handleTelegramCommands() {
       botInstance.chat(message); // Отправляем сообщение в чат Minecraft
       telegramBot.sendMessage(
         chatId,
-        `Сообщение отправлено в Minecraft: "${message}"`
+        `Сообщение отправлено в Minecraft: "${message}"`,
       );
     } else {
       telegramBot.sendMessage(
         chatId,
-        "Minecraft бот не запущен. Пожалуйста, запустите его с помощью команды /start_mc."
+        "Minecraft бот не запущен. Пожалуйста, запустите его с помощью команды /start_mc.",
       );
     }
   });
