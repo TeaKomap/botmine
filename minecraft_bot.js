@@ -1,22 +1,33 @@
+const express = require('express');
 const mineflayer = require("mineflayer");
 const readline = require("readline");
 const TelegramBot = require("node-telegram-bot-api");
 const keep_alive = require("./keep_alive.js");
 
-// Ваш токен Telegram бота и ID чата
-const telegramToken = "7761808957:AAHWh_RW1n2YWH87dIWJr6LKZt-StG7NZ3Y";
-const chatId = "768254793";
+const telegramToken = "7761808957:AAHWh_RW1n2YWH87dIWJr6LKZt-StG7NZ3Y"; // Ваш токен Telegram бота
+const chatId = "768254793"; // Ваш ID чата
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-// Переменные для управления состоянием
 let chatEnabled = true;
 let botInstance = null;
 
-// Функция для подключения бота
+const app = express();
+const port = process.env.PORT || 8080; // Используем переменную окружения PORT
+
+// Запускаем сервер Express
+app.get('/', (req, res) => {
+  res.send('Minecraft Telegram Bot работает!'); // Сообщение при доступе к корневому маршруту
+});
+
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Сервер запущен на порту ${port}`); // Логируем, что сервер запущен
+});
+
+// Функция для подключения к боту Minecraft
 function connectBot() {
   botInstance = mineflayer.createBot({
     host: "prdx.so",
@@ -30,26 +41,23 @@ function connectBot() {
     if (chatEnabled) {
       console.log(`${username}: ${message}`); // Логируем сообщение
       if (message && username !== botInstance.username) {
-        // Проверяем, что сообщение не пустое и не от самого бота
-        sendMessageToTelegram(`<${username}>: ${message}`);
+        sendMessageToTelegram(`<${username}>: ${message}`); // Отправляем сообщение в Telegram
       }
     }
   });
 
   // Обработка отключения бота
   botInstance.once("end", () => {
-    console.log("Bot disconnected, reconnecting");
-    setTimeout(connectBot, 12000000);
+    console.log("Бот отключен, переподключение");
+    setTimeout(connectBot, 12000000); // Переподключаем через 12 секунд
   });
 
   // Чтение ввода с клавиатуры и отправка в чат Minecraft
   rl.on("line", (input) => {
     if (botInstance) {
-      botInstance.chat(input);
+      botInstance.chat(input); // Отправляем введенное сообщение в чат Minecraft
     } else {
-      console.log(
-        "Бот не запущен. Пожалуйста, запустите его с помощью команды /start_mc.",
-      );
+      console.log("Бот не запущен. Пожалуйста, запустите его с помощью команды /start_mc.");
     }
   });
 }
@@ -57,17 +65,16 @@ function connectBot() {
 // Функция для отправки сообщений в Telegram
 function sendMessageToTelegram(message) {
   const telegramBot = new TelegramBot(telegramToken, { polling: true });
-  telegramBot
-    .sendMessage(chatId, message)
+  telegramBot.sendMessage(chatId, message)
     .then(() => {
-      console.log(`Сообщение отправлено в Telegram: ${message}`);
+      console.log(`Сообщение отправлено в Telegram: ${message}`); // Логируем успешную отправку
     })
     .catch((err) => {
-      console.error(`Ошибка при отправке сообщения в Telegram: ${err.message}`);
+      console.error(`Ошибка при отправке сообщения в Telegram: ${err.message}`); // Логируем ошибку
     });
 }
 
-// Функция для обработки команд от Telegram
+// Обработка команд от Telegram
 function handleTelegramCommands() {
   const telegramBot = new TelegramBot(telegramToken, { polling: true });
 
@@ -77,15 +84,9 @@ function handleTelegramCommands() {
       const { x, y, z } = botInstance.entity.position;
       const health = botInstance.health;
       const food = botInstance.food;
-      telegramBot.sendMessage(
-        chatId,
-        `Координаты: X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}, Z: ${z.toFixed(2)}\nЗдоровье: ${health}\nЕда: ${food}`,
-      );
+      telegramBot.sendMessage(chatId, `Координаты: X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}, Z: ${z.toFixed(2)}\nЗдоровье: ${health}\nЕда: ${food}`);
     } else {
-      telegramBot.sendMessage(
-        chatId,
-        "Бот Minecraft не запущен. Пожалуйста, запустите его с помощью команды /start_mc.",
-      );
+      telegramBot.sendMessage(chatId, "Бот Minecraft не запущен. Пожалуйста, запустите его с помощью команды /start_mc.");
     }
   });
 
@@ -94,9 +95,9 @@ function handleTelegramCommands() {
     const chatId = msg.chat.id;
     if (!botInstance) {
       connectBot();
-      telegramBot.sendMessage(chatId, "Minecraft бот запущен!");
+      telegramBot.sendMessage(chatId, "Minecraft бот запущен!"); // Сообщение о запуске бота
     } else {
-      telegramBot.sendMessage(chatId, "Minecraft бот уже запущен.");
+      telegramBot.sendMessage(chatId, "Minecraft бот уже запущен."); // Сообщение, если бот уже запущен
     }
   });
 
@@ -106,20 +107,20 @@ function handleTelegramCommands() {
     if (botInstance) {
       botInstance.quit(); // Отключаем бота
       botInstance = null;
-      telegramBot.sendMessage(chatId, "Minecraft бот остановлен.");
+      telegramBot.sendMessage(chatId, "Minecraft бот остановлен."); // Сообщение о остановке бота
     } else {
-      telegramBot.sendMessage(chatId, "Minecraft бот не запущен.");
+      telegramBot.sendMessage(chatId, "Minecraft бот не запущен."); // Сообщение, если бот не запущен
     }
   });
 
   telegramBot.onText(/\/chat-on/, (msg) => {
     chatEnabled = true;
-    telegramBot.sendMessage(msg.chat.id, "Чат включен.");
+    telegramBot.sendMessage(msg.chat.id, "Чат включен."); // Сообщение о включении чата
   });
 
   telegramBot.onText(/\/chat-off/, (msg) => {
     chatEnabled = false;
-    telegramBot.sendMessage(msg.chat.id, "Чат отключен.");
+    telegramBot.sendMessage(msg.chat.id, "Чат отключен."); // Сообщение о отключении чата
   });
 
   // Обработка команды /say
@@ -128,15 +129,9 @@ function handleTelegramCommands() {
     const message = match[1]; // Получаем сообщение после команды
     if (botInstance) {
       botInstance.chat(message); // Отправляем сообщение в чат Minecraft
-      telegramBot.sendMessage(
-        chatId,
-        `Сообщение отправлено в Minecraft: "${message}"`,
-      );
+      telegramBot.sendMessage(chatId, `Сообщение отправлено в Minecraft: "${message}"`); // Подтверждение отправки
     } else {
-      telegramBot.sendMessage(
-        chatId,
-        "Minecraft бот не запущен. Пожалуйста, запустите его с помощью команды /start_mc.",
-      );
+      telegramBot.sendMessage(chatId, "Minecraft бот не запущен. Пожалуйста, запустите его с помощью команды /start_mc.");
     }
   });
 }
