@@ -2,6 +2,7 @@ const mineflayer = require("mineflayer");
 const readline = require("readline");
 const TelegramBot = require("node-telegram-bot-api");
 const keep_alive = require("./keep_alive.js");
+const port = process.env.PORT || 1010;
 
 // Ваш токен Telegram бота и ID чата
 const telegramToken = "7761808957:AAHWh_RW1n2YWH87dIWJr6LKZt-StG7NZ3Y";
