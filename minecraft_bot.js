@@ -13,6 +13,9 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+
 // Переменные для управления состоянием
 let chatEnabled = true;
 let botInstance = null;
