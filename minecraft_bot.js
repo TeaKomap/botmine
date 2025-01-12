@@ -1,9 +1,7 @@
-const express = require('express'); // Импортируем express
 const mineflayer = require("mineflayer");
 const readline = require("readline");
 const TelegramBot = require("node-telegram-bot-api");
 const keep_alive = require("./keep_alive.js");
-const port = process.env.PORT || 1010;
 
 // Ваш токен Telegram бота и ID чата
 const telegramToken = "7761808957:AAHWh_RW1n2YWH87dIWJr6LKZt-StG7NZ3Y";
@@ -12,14 +10,6 @@ const chatId = "768254793";
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
-});
-
-// Создаем экземпляр express
-const app = express();
-
-// Запускаем сервер
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
 });
 
 // Переменные для управления состоянием
@@ -58,7 +48,7 @@ function connectBot() {
       botInstance.chat(input);
     } else {
       console.log(
-        "Бот не запущен. Пожалуйста, запустите его с помощью команды /start_mc."
+        "Бот не запущен. Пожалуйста, запустите его с помощью команды /start_mc.",
       );
     }
   });
@@ -89,12 +79,12 @@ function handleTelegramCommands() {
       const food = botInstance.food;
       telegramBot.sendMessage(
         chatId,
-        `Координаты: X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}, Z: ${z.toFixed(2)}\nЗдоровье: ${health}\nЕда: ${food}`
+        `Координаты: X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}, Z: ${z.toFixed(2)}\nЗдоровье: ${health}\nЕда: ${food}`,
       );
     } else {
       telegramBot.sendMessage(
         chatId,
-        "Бот Minecraft не запущен. Пожалуйста, запустите его с помощью команды /start_mc."
+        "Бот Minecraft не запущен. Пожалуйста, запустите его с помощью команды /start_mc.",
       );
     }
   });
@@ -140,12 +130,12 @@ function handleTelegramCommands() {
       botInstance.chat(message); // Отправляем сообщение в чат Minecraft
       telegramBot.sendMessage(
         chatId,
-        `Сообщение отправлено в Minecraft: "${message}"`
+        `Сообщение отправлено в Minecraft: "${message}"`,
       );
     } else {
       telegramBot.sendMessage(
         chatId,
-        "Minecraft бот не запущен. Пожалуйста, запустите его с помощью команды /start_mc."
+        "Minecraft бот не запущен. Пожалуйста, запустите его с помощью команды /start_mc.",
       );
     }
   });
