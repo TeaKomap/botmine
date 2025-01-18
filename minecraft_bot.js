@@ -15,8 +15,11 @@ const rl = readline.createInterface({
 let chatEnabled = true;
 let botInstance = null;
 
-// Создаем один экземпляр бота Telegram
-const telegramBot = new TelegramBot(telegramToken, { polling: true });
+try {
+  telegramBot = new TelegramBot(telegramToken, { polling: true });
+} catch (error) {
+  console.error("Ошибка при создании бота Telegram:", error.message);
+}
 
 // Функция для обновления чата
 function updateChat(logMessage) {
