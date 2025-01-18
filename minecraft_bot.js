@@ -1,7 +1,6 @@
 const mineflayer = require("mineflayer");
 const readline = require("readline");
 const TelegramBot = require("node-telegram-bot-api");
-const keep_alive = require("./keep_alive.js");
 
 // Ваш токен Telegram бота и ID чата
 const telegramToken = "7761808957:AAHWh_RW1n2YWH87dIWJr6LKZt-StG7NZ3Y";
@@ -16,28 +15,8 @@ const rl = readline.createInterface({
 let chatEnabled = true;
 let botInstance = null;
 
-// Создаем экземпляр бота Telegram с Long Polling
-const telegramBot = new TelegramBot(telegramToken, {
-  polling: {
-    interval: 3000,   // Интервал между запросами (3 секунды)
-    autoStart: true,  // Автоматический старт polling
-    params: {
-      timeout: 10   // Тайм-аут запроса (10 секунд)
-    }
-  }
-});
-
-// Функция для отправки сообщений в Telegram
-function sendMessageToTelegram(message) {
-  telegramBot
-    .sendMessage(chatId, message)
-    .then(() => {
-      console.log(`Сообщение отправлено в Telegram: ${message}`);
-    })
-    .catch((err) => {
-      console.error(`Ошибка при отправке сообщения в Telegram: ${err.message}`);
-    });
-}
+// Создаем один экземпляр бота Telegram
+const telegramBot = new TelegramBot(telegramToken, { polling: true });
 
 // Функция для обновления чата
 function updateChat(logMessage) {
@@ -65,9 +44,8 @@ function connectBot() {
 
   // Обработка отключения бота
   botInstance.once("end", () => {
-    console.log("Бот отключен, переподключение через 120 секунд.");
-    setTimeout(connectBot, 120000); // Переподключение через 120 секунд
-    botInstance = null; // Устанавливаем botInstance в null, чтобы избежать конфликтов
+    console.log("Bot disconnected, reconnecting");
+    setTimeout(connectBot, 120000); // Измените время на разумное, например, 120 секунд
   });
 
   // Чтение ввода с клавиатуры и отправка в чат Minecraft
@@ -75,11 +53,11 @@ function connectBot() {
     if (botInstance) {
       botInstance.chat(input);
     } else {
-      console.log("Бот не запущен.");
+      console.log(
+        "Бот не запущен. Пожалуйста, запустите его с помощью команды /start_mc."
+      );
     }
   });
-
-  console.log("Бот подключен к Minecraft!");
 }
 
 // Функция для парсинга сообщений
@@ -120,8 +98,7 @@ function parseMessage(message) {
 
     // Определяем тип чата (G |, D |, L |)
     const prefix = extra.find((item) => item.color && item.text);
-    const messageType =
- prefix?.text || 'Unknown';
+    const messageType = prefix?.text || 'Unknown';
     let chatType = 'Неизвестно';
     if (messageType === 'D |') chatType = 'Discord';
     if (messageType === 'G |') chatType = 'Global';
@@ -193,7 +170,7 @@ function handleTelegramCommands() {
         `Координаты: X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}, Z: ${z.toFixed(2)}\nЗдоровье: ${health}\nЕда: ${food}`,
       );
     } else {
-      telegramBot.sendMessage(chatId, "Minecraft бот не запущен. Пожалуйста, запустите его с помощью команды /start_mc.");
+      telegramBot.sendMessage(chatId, "Бот Minecraft не запущен. Пожалуйста, запустите его с помощью команды /start_mc.");
     }
   });
 
@@ -213,7 +190,7 @@ function handleTelegramCommands() {
     const chatId = msg.chat.id;
     if (botInstance) {
       botInstance.quit(); // Отключаем бота
-      botInstance = null; // Устанавливаем botInstance в null
+      botInstance = null;
       telegramBot.sendMessage(chatId, "Minecraft бот остановлен.");
     } else {
       telegramBot.sendMessage(chatId, "Minecraft бот не запущен.");
@@ -245,5 +222,3 @@ function handleTelegramCommands() {
 
 // Запуск обработки команд Telegram
 handleTelegramCommands();
-
-
