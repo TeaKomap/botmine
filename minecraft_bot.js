@@ -193,7 +193,7 @@ function handleTelegramCommands() {
         `Координаты: X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}, Z: ${z.toFixed(2)}\nЗдоровье: ${health}\nЕда: ${food}`,
       );
     } else {
-      telegramBot.sendMessage(chatId, "Бот Minecraft не запущен. Пожалуйста, запустите его с помощью команды /start_mc.");
+      telegramBot.sendMessage(chatId, "Minecraft бот не запущен. Пожалуйста, запустите его с помощью команды /start_mc.");
     }
   });
 
@@ -213,7 +213,7 @@ function handleTelegramCommands() {
     const chatId = msg.chat.id;
     if (botInstance) {
       botInstance.quit(); // Отключаем бота
-      botInstance = null;
+      botInstance = null; // Устанавливаем botInstance в null
       telegramBot.sendMessage(chatId, "Minecraft бот остановлен.");
     } else {
       telegramBot.sendMessage(chatId, "Minecraft бот не запущен.");
@@ -245,4 +245,5 @@ function handleTelegramCommands() {
 
 // Запуск обработки команд Telegram
 handleTelegramCommands();
+
 
