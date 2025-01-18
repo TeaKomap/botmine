@@ -1,6 +1,7 @@
 const mineflayer = require("mineflayer");
 const readline = require("readline");
 const TelegramBot = require("node-telegram-bot-api");
+const keep_alive = require("./keep_alive.js");
 
 // Ваш токен Telegram бота и ID чата
 const telegramToken = "7761808957:AAHWh_RW1n2YWH87dIWJr6LKZt-StG7NZ3Y";
@@ -15,11 +16,8 @@ const rl = readline.createInterface({
 let chatEnabled = true;
 let botInstance = null;
 
-try {
-  telegramBot = new TelegramBot(telegramToken, { polling: true });
-} catch (error) {
-  console.error("Ошибка при создании бота Telegram:", error.message);
-}
+// Создаем один экземпляр бота Telegram
+const telegramBot = new TelegramBot(telegramToken, { polling: false });
 
 // Функция для обновления чата
 function updateChat(logMessage) {
