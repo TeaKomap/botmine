@@ -17,7 +17,7 @@ let chatEnabled = true;
 let botInstance = null;
 
 // Создаем один экземпляр бота Telegram
-const telegramBot = new TelegramBot(telegramToken, { polling: false });
+const telegramBot = new TelegramBot(telegramToken, { polling: true });
 
 // Функция для обновления чата
 function updateChat(logMessage) {
