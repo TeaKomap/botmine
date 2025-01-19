@@ -223,3 +223,4 @@ function handleTelegramCommands() {
 
 // Запуск обработки команд Telegram
 handleTelegramCommands();
+
